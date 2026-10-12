@@ -1,3 +1,8 @@
+End-to-End AWS Multi-Tier Cloud Architecture
+
+<img width="621" height="266" alt="image" src="https://github.com/user-attachments/assets/61411e20-bddc-451d-acf5-239d3f7747f8" />
+
+
 <span>**1.1. AWS Account Setup and VPC Configuration**:Phase 1: Preparation & Network Architecture.</span>
 
 - <span>**Create Sub-Accounts & OUs:** Set up an AWS Master account, create a sub-account named </span>`DevOps`<span>, create an Organizational Unit (OU) named </span>`Dev`<span>, and move the </span>`DevOps`<span> account inside it. Register your custom domain name via a domain registrar and set up a Public Hosted Zone in Amazon Route 53.</span>
