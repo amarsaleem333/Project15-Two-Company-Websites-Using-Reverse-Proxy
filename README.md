@@ -3,77 +3,161 @@ End-to-End AWS Multi-Tier Cloud Architecture
 <img width="621" height="266" alt="image" src="https://github.com/user-attachments/assets/61411e20-bddc-451d-acf5-239d3f7747f8" />
 
 
-<span>**1.1. AWS Account Setup and VPC Configuration**:Phase 1: Preparation & Network Architecture.</span>
+End-to-End AWS Multi-Tier Cloud Architecture & Reverse Proxy Solution
+Architecture Overview & Infrastructure Summary
+This project implements a secure, scalable, and highly available multi-tier web architecture on AWS to host a primary WordPress business website and an internal Tooling platform for DevOps operations.   
+DOCX
 
-- <span>**Create Sub-Accounts & OUs:** Set up an AWS Master account, create a sub-account named </span>`DevOps`<span>, create an Organizational Unit (OU) named </span>`Dev`<span>, and move the </span>`DevOps`<span> account inside it. Register your custom domain name via a domain registrar and set up a Public Hosted Zone in Amazon Route 53.</span>
+Architecture Scope: Deployed across 2 Availability Zones (us-east-1a and us-east-1b) adhering to the multi-tier reference model.   
+DOCX
 
-- <span>**VPC & Subnet Setup:** Create a custom VPC (</span>`10.0.0.0/16`<span>) and provision public subnets (</span>`10.0.1.0/24`<span>, </span>`10.0.3.0/24`<span>), private web subnets (</span>`10.0.2.0/24`<span>, </span>`10.0.4.0/24`<span>), and data layer subnets (</span>`10.0.5.0/24`<span>, </span>`10.0.6.0/24`<span>) across two Availability Zones.</span>
+Traffic Flow: Client requests hit Route 53 DNS, route through an Internet-Facing Application Load Balancer (ALB) with TLS termination, pass through an Auto-Scaling Nginx Reverse-Proxy Tier, route through an Internal ALB, and land on private WordPress and Tooling Web Servers backed by Amazon EFS and a Multi-AZ RDS MySQL 8.x Database.
 
-- <span>**Gateways & Routing:** Create an Internet Gateway and attach it to your VPC. Allocate 3 Elastic IPs, assign one to a NAT Gateway placed in a public subnet, and configure separate Route Tables for public and private subnets.</span>
+Table of Contents
+AWS Account Setup and VPC Configuration
 
-- **Verification:** Confirm that public subnets route internet-bound traffic through the Internet Gateway and private subnets route traffic through the NAT Gateway.
+Security Groups & Least-Privilege Access
 
-<span>**2.2. Define Security Group Rules**:Phase 2: Security Groups Setup.</span>
+ACM TLS Certificate (Apex & Wildcard)
 
-- <span>**Nginx Security Group:** Create a security group allowing inbound HTTP/HTTPS (ports 80 and 443) strictly from the external Application Load Balancer.</span>
+Bastion Hosts & Replacement Strategy
 
-- <span>**Bastion Security Group:** Restrict inbound SSH (port 22) access to your specific workstation public IP address.</span>
+Golden Images & Launch Templates
 
-- <span>**Web Servers Security Group:** Configure rules to permit inbound traffic exclusively from the Nginx instances and the internal Application Load Balancer.</span>
+Nginx Reverse-Proxy Routing Configuration
 
-- <span>**Data Layer Security Group:** Configure the EFS and RDS security groups so that database access is restricted solely to the web servers, while EFS mount targets accept connections from both Nginx and web servers.</span>
+Load Balancing & Auto Scaling Groups
 
-- **Verification:** Check the inbound rules for each security group in the EC2 Console to ensure least-privilege access is enforced.
+Data Layer (EFS & Encrypted RDS)
 
-<span>**3.3. Request and Validate ACM TLS Certificate**:Phase 3: Security & Certificates.</span>
+DNS Configuration & Final Verification
 
-- <span>**ACM Certificate Request:** Navigate to the AWS Certificate Manager (ACM), request a public wildcard certificate for your domain name (e.g., </span>`*.project15.online`<span>), and select DNS validation.</span>
+1. AWS Account Setup and VPC Configuration
+Account & OUs: Set up an AWS Master account, created a sub-account named DevOps, established an Organizational Unit (OU) named Dev, and placed the DevOps account inside it. Registered a custom domain (project15.online) and configured a Public Hosted Zone in Amazon Route 53.   
+DOCX
++ 1
 
-- <span>**DNS Validation:** Use the **Create records in Route 53** feature inside ACM to automatically provision the required CNAME validation records.</span>
+VPC & Subnets: Created a custom VPC (10.0.0.0/16) containing public subnets (10.0.1.0/24, 10.0.3.0/24), private web subnets (10.0.2.0/24, 10.0.4.0/24), and data layer subnets (10.0.5.0/24, 10.0.6.0/24) across two Availability Zones.   
+DOCX
 
-- <span>**Verification:** Confirm that the certificate status changes from pending validation to **Issued**.</span>
+Gateways & Routing: Deployed an Internet Gateway attached to the VPC and configured a single NAT Gateway (balancing cost vs. resilience) with allocated Elastic IPs to manage outbound traffic for private subnets.   
+DOCX
 
-<span>**4.4. Provision Bastion Hosts and Elastic IPs**:Phase 4: Compute & Bastion Hosts.</span>
+2. Security Groups & Least-Privilege Access
+Nginx Security Group: Allows inbound HTTP/HTTPS traffic strictly from the external Application Load Balancer.   
+DOCX
 
-- <span>**Launch Bastion EC2 Instances:** Deploy CentOS/AlmaLinux EC2 instances for your Bastion hosts across your availability zones. Install necessary packages (</span>`python`<span>, </span>`ntp`<span>, </span>`net-tools`<span>, </span>`vim`<span>, </span>`wget`<span>, </span>`telnet`<span>, </span>`epel-release`<span>, </span>`htop`<span>, </span>`git`<span>, </span>`ansible`<span>).</span>
+Bastion Security Group: Restricts inbound SSH (port 22) access exclusively to authorized administrative workstation IP addresses.   
+DOCX
 
-- <span>**Allocate Elastic IPs:** Assign a dedicated Elastic IP to each Bastion EC2 instance to maintain permanent external management access.</span>
+Web Servers Security Group: Tightened inbound rules to accept traffic only from the Nginx / Internal ALB security group tiers.   
+DOCX
 
-- <span>**Verification:** Verify that each Elastic IP is successfully associated with its respective Bastion instance ID in the EC2 console.</span>
+Data Layer Security Group: Enforces strict isolation where RDS MySQL is accessible solely from the web server tier, and EFS mount targets are restricted to Nginx and web servers.   
+DOCX
 
-<span>**5.5. Build Golden Images and Launch Templates**:Phase 5: Golden Images & Launch Templates.</span>
+3. ACM TLS Certificate (Apex & Wildcard)
+Certificate Scope: Correctly requested and validated an ACM public certificate covering both the root apex domain (project15.online) and the wildcard subdomain (*.project15.online) to ensure secure HTTPS coverage for all properties.
 
-- <span>**Configure Golden Images:** Spin up base instances for Nginx, WordPress, and Tooling web servers, install required dependencies (including PHP for web servers), and create custom AMIs out of them.</span>
+Validation: Verified via automatic DNS validation records created in Route 53.   
+DOCX
 
-- <span>**Create Launch Templates:** Build distinct launch templates for Nginx, Bastion, and Web servers referencing your custom AMIs, instance types (</span>`t2.micro`<span>), and user data installation scripts.</span>
+📸 Evidence: See documentation/images/acm-certificate-validation.png
 
-- <span>**Verification:** Check the **AMIs** and **Launch Templates** consoles to verify that all configurations point to the correct image IDs and userdata scripts.</span>
+4. Bastion Hosts & Replacement Strategy
+Deployment: CentOS EC2 instances deployed in public subnets across 2 AZs with pre-installed administrative tooling (Ansible, Git, Python).   
+DOCX
 
-<span>**6.6. Set Up Load Balancers and Auto Scaling Groups**:Phase 6: Load Balancing & Auto Scaling.</span>
+Replacement Architecture Note: Combining Auto Scaling Groups with manually assigned permanent Elastic IPs requires lifecycle automation (such as AWS Lambda or ASG lifecycle hooks invoking aws ec2 associate-address) to dynamically attach static EIPs when instances are replaced. Alternatively, standalone managed instances can be used for persistent management access.
 
-- <span>**External ALB (Nginx):** Create an internet-facing Application Load Balancer listening on HTTPS port 443, attach your ACM certificate, and target your Nginx instances.</span>
+5. Golden Images & Launch Templates
+AMIs: Built custom golden AMIs for Nginx, WordPress, and Tooling servers with pre-configured dependencies (PHP, Nginx, system utilities).   
+DOCX
 
-- <span>**Internal ALB (Web Servers):** Create an internal Application Load Balancer within the private subnets to route traffic safely to the private WordPress and Tooling web servers.</span>
+Launch Templates: Configured parameterized launch templates linking custom AMIs, t2.micro instance types, security groups, and automated UserData installation scripts.   
+DOCX
 
-- <span>**Auto Scaling Groups (ASGs):** Deploy ASGs for Nginx, Bastion, and web servers with a desired capacity of 2, minimum of 2, and maximum of 4, configuring CPU utilization scaling policies (90%).</span>
+6. Nginx Reverse-Proxy Routing Configuration
+The core routing mechanism relies on Nginx distinguishing incoming requests by server_name and proxying traffic to the appropriate downstream internal service via proxy_pass.
 
-- <span>**Verification:** Ensure all target groups show registered instances with a **Healthy** status.</span>
+Nginx
+# Upstream definitions pointing to internal backend targets
+upstream wordpress_backend {
+    server internal-wordpress-alb-xxxx.us-east-1.elb.amazonaws.com:443;
+}
 
-<span>**7.7. Configure Amazon EFS and Multi-AZ RDS MySQL**:Phase 7: Data Layer (EFS & RDS).</span>
+upstream tooling_backend {
+    server internal-tooling-alb-xxxx.us-east-1.elb.amazonaws.com:443;
+}
 
-- <span>**Amazon EFS Setup:** Create an EFS file system, provision mount targets across all availability zones in your data layer subnets, and create an EFS access point.</span>
+# HTTP to HTTPS Redirection
+server {
+    listen 80;
+    server_name project15.online tooling.project15.online;
+    return 301 https://$host$request_uri;
+}
 
-- <span>**KMS Key & DB Subnet Group:** Create a customer-managed KMS key for database encryption and configure a database subnet group using your private data subnets.</span>
+# Root Domain Server Block (WordPress)
+server {
+    listen 443 ssl;
+    server_name project15.online;
 
-- <span>**RDS MySQL Deployment:** Deploy a Multi-AZ MySQL 8.x RDS database instance, attach your DB security group, ensure public accessibility is disabled, and enable encryption using your KMS key.</span>
+    location / {
+        proxy_pass https://wordpress_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_ssl_verify off;
+    }
 
-- <span>**Verification:** Confirm that the EFS mount targets and the RDS database instance display an **Available** status.</span>
+    location /healthstatus {
+        access_log off;
+        return 200 'healthy\n';
+    }
+}
 
-<span>**8.8. Finalize Route 53 DNS Routing**:Phase 8: DNS Configuration & Final Verification.</span>
+# Subdomain Server Block (Tooling)
+server {
+    listen 443 ssl;
+    server_name tooling.project15.online;
 
-- <span>**Create Alias Records:** Navigate to your Route 53 hosted zone and create **Alias** records for both the root domain (</span>`project15.online`<span>) and your tooling subdomain (</span>`tooling.project15.online`<span>) pointing directly to your external Nginx ALB DNS name.</span>
+    location / {
+        proxy_pass https://tooling_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_ssl_verify off;
+    }
 
-- <span>**Verification:** Run </span>`nslookup project15.online`<span> and </span>`nslookup tooling.project15.online`<span> from your terminal to verify proper DNS resolution to the external ALB.</span>
+    location /healthstatus {
+        access_log off;
+        return 200 'healthy\n';
+    }
+}
+📸 Evidence: See documentation/images/nginx-reverse-proxy-flow.png
 
+7. Load Balancing & Auto Scaling Groups
+External ALB: Internet-facing load balancer listening on HTTPS (port 443) with the ACM certificate attached, forwarding traffic to the Nginx target group.   
+DOCX
 
+Internal ALB: Private load balancer routing traffic securely from Nginx to the private auto-scaling web server pools.
 
+Auto Scaling: Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.   
+DOCX
+
+📸 Evidence: See documentation/images/target-group-health-status.png
+
+8. Data Layer (EFS & Encrypted RDS)
+Amazon EFS: Provisioned an elastic file system with mount targets across both data layer subnets and configured access points for shared asset storage.   
+DOCX
+
+RDS MySQL Database: Deployed a Multi-AZ MySQL 8.x database instance within private data subnets, encrypted using a customer-managed AWS KMS key, with automated backups and CloudWatch log exports enabled.   
+DOCX
+
+9. DNS Configuration & Final Verification
+Route 53 Aliases: Created Alias records for both the root domain (project15.online) and the tooling subdomain (tooling.project15.online) pointing directly to the external Nginx ALB DNS name.   
+DOCX
+
+Verification: Validated correct resolution and end-to-end TLS accessibility using nslookup and browser test runs.
