@@ -138,6 +138,8 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 - **Auto Scaling:** Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.  
 📸 **Evidence:** ![Target Group Health Status](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
 
+
+
 8. Data Layer (EFS & Encrypted RDS)
     -Amazon EFS: Provisioned an elastic file system with mount targets across both data layer subnets and configured access points for shared asset storage.
 
