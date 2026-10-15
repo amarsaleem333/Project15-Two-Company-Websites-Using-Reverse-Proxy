@@ -137,7 +137,8 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 - **Internal ALB:** Private load balancer routing traffic securely from Nginx to the private auto-scaling web server pools.
 - **Auto Scaling:** Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.  
 
-- 📸 **Evidence:** ![Target Group Health Status](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
+- 📸 **Evidence:** 
+<img width="1920" height="1032" alt="EC2 instance spin two more auto scaling traget after set the nginx-asg" src="https://github.com/user-attachments/assets/3989404e-d4fa-4495-b1fd-b50651e71b28" />
 
 
 
