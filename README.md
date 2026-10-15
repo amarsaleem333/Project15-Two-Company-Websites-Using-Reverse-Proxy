@@ -30,7 +30,7 @@ Table of Contents
 3. ACM TLS Certificate (Apex & Wildcard)
     • Certificate Scope: Correctly requested and validated an ACM public certificate covering both the root apex domain (project15.online) and the wildcard subdomain (*.project15.online) to ensure secure HTTPS coverage for all properties.
     • Validation: Verified via automatic DNS validation records created in Route 53. 
-📸 Evidence: See  acm-certificate-validation.png
+📸 **Evidence:** ![ACM Certificate Validation](docs/ACM%20cert%20Issued.png)
 4. Bastion Hosts & Replacement Strategy
     • Deployment: CentOS EC2 instances deployed in public subnets across 2 AZs with pre-installed administrative tooling (Ansible, Git, Python). 
     • Replacement Architecture Note: Combining Auto Scaling Groups with manually assigned permanent Elastic IPs requires lifecycle automation (such as AWS Lambda or ASG lifecycle hooks invoking aws ec2 associate-address) to dynamically attach static EIPs when instances are replaced. Alternatively, standalone managed instances can be used for persistent management access.
@@ -96,12 +96,12 @@ server {
     }
 }
 
-📸 Evidence: See  nginx-reverse-proxy-flow.png
+📸 **Evidence:** ![Nginx Reverse Proxy Flow](docs/ALB%20EXTERNAL%20.png)
 7. Load Balancing & Auto Scaling Groups
     • External ALB: Internet-facing load balancer listening on HTTPS (port 443) with the ACM certificate attached, forwarding traffic to the Nginx target group. 
     • Internal ALB: Private load balancer routing traffic securely from Nginx to the private auto-scaling web server pools.
     • Auto Scaling: Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%. 
-📸 Evidence: See  target-group-health-status.png
+📸 **Evidence:** ![Target Group Health Status](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
 8. Data Layer (EFS & Encrypted RDS)
     • Amazon EFS: Provisioned an elastic file system with mount targets across both data layer subnets and configured access points for shared asset storage. 
     • RDS MySQL Database: Deployed a Multi-AZ MySQL 8.x database instance within private data subnets, encrypted using a customer-managed AWS KMS key, with automated backups and CloudWatch log exports enabled. 
