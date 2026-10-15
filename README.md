@@ -139,7 +139,7 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 
 - 📸 **Evidence:** 
 
-![Auto Scaling Group Target](./docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
+![Auto Scaling Group Target](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
  
          
 
