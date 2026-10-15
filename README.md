@@ -126,3 +126,26 @@ server {
         return 200 'healthy\n';
     }
 }
+
+
+### 7. Load Balancing & Auto Scaling Groups
+* **External ALB:** Internet-facing load balancer listening on HTTPS (port 443) with the ACM certificate attached, forwarding traffic to the Nginx target group.
+* **Internal ALB:** Private load balancer routing traffic securely from Nginx to the private auto-scaling web server pools.
+* **Auto Scaling:** Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.  
+📸 **Evidence:** ![Target Group Health Status](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
+
+
+8. Data Layer (EFS & Encrypted RDS)
+    -Amazon EFS: Provisioned an elastic file system with mount targets across both data layer subnets and configured access points for shared asset storage.
+
+    -RDS MySQL Database: Deployed a Multi-AZ MySQL 8.x database instance within private data subnets, encrypted using a customer-managed AWS KMS key, with automated backups and CloudWatch log exports enabled.
+
+
+9. DNS Configuration & Final Verification
+      -Route 53 Aliases: Created Alias records for both the root domain (project15.online) and the tooling subdomain (tooling.project15.online) pointing directly to the external Nginx ALB DNS name.
+
+      -Verification: Validated correct resolution and end-to-end TLS accessibility using nslookup and browser test runs confirming request flows (project15.online → Nginx → WordPress and tooling.project15.online → Nginx →         Tooling).
+
+
+
+
