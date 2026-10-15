@@ -139,8 +139,7 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 
 - 📸 **Evidence:** 
 
-[https://github.com/user-attachments/assets/1aa7b9ca-1da1-42f2-8f50-3cea64142532](https://github-production-user-asset-6210df.s3.amazonaws.com/134626440/674117163-1aa7b9ca-1da1-42f2-8f50-3cea64142532.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20261015%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261015T020354Z&X-Amz-Expires=300&X-Amz-Signature=ba895bef568418d60ddde7df36beaf212e396b18f12647db8824b3d8fd248a4e&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
-
+![Auto Scaling Group Target](./docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
  
          
 
