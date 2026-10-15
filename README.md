@@ -139,7 +139,7 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 
 - 📸 **Evidence:** 
 
-<img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/1aa7b9ca-1da1-42f2-8f50-3cea64142532" />
+https://github.com/user-attachments/assets/1aa7b9ca-1da1-42f2-8f50-3cea64142532
 
  
          
