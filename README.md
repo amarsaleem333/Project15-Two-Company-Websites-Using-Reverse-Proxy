@@ -138,9 +138,9 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 - **Auto Scaling:** Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.  
 
 - 📸 **Evidence:** 
-<img width="1920" height="1032" alt="EC2 instance spin two more auto scaling traget after set the nginx-asg" src="https://github.com/user-attachments/assets/3989404e-d4fa-4495-b1fd-b50651e71b28" />
 
 
+<img width="1920" height="1032" alt="EC2 instance spin two more auto scaling traget after set the nginx-asg" src="https://github.com/user-attachments/assets/06c7ef66-6014-44b6-ba5c-79dd209ace3f" />
 
 
 
