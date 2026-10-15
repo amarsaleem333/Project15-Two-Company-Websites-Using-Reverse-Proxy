@@ -139,10 +139,10 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 
 - 📸 **Evidence:** 
 
+<img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/1aa7b9ca-1da1-42f2-8f50-3cea64142532" />
 
-<img width="1920" height="1032" alt="EC2 instance spin two more auto scaling traget after set the nginx-asg" src="https://github.com/user-attachments/assets/06c7ef66-6014-44b6-ba5c-79dd209ace3f" />
-
-
+ 
+         
 
 8. Data Layer (EFS & Encrypted RDS)
     -Amazon EFS: Provisioned an elastic file system with mount targets across both data layer subnets and configured access points for shared asset storage.
