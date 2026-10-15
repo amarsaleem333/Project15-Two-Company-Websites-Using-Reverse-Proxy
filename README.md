@@ -40,11 +40,10 @@ This project implements a secure, scalable, and highly available multi-tier web 
 
 ---
 
-### 3. ACM TLS Certificate (Apex & Wildcard)
-* **Certificate Scope:** Correctly requested and validated an ACM public certificate covering both the root apex domain (`project15.online`) and the wildcard subdomain (`*.project15.online`) to ensure secure HTTPS coverage for all properties.
-* **Validation:** Verified via automatic DNS validation records created in Route 53.  
-📸 **Evidence:** ![ACM Certificate Validation](docs/ACM%20cert%20Issued.png)
-
+## 3. ACM TLS Certificate (Apex & Wildcard)
+- Certificate Scope: Correctly requested and validated an ACM public certificate covering both the root apex domain (project15.online) and the wildcard subdomain (*.project15.online) to ensure secure HTTPS coverage for all properties.
+- Validation: Verified via automatic DNS validation records created in Route 53.
+- 📸 **Evidence:** ![ACM Certificate Issued](docs/ACM%20cert%20Issued.png)
 ---
 
 ### 4. Bastion Hosts & Replacement Strategy
@@ -59,25 +58,22 @@ This project implements a secure, scalable, and highly available multi-tier web 
 
 ---
 
-### 6. Nginx Reverse-Proxy Routing Configuration & Request Flow
-The core routing mechanism relies on Nginx distinguishing incoming requests by `server_name` and proxying traffic to the appropriate downstream internal service via `proxy_pass`. Upstream TLS verification is enabled (`proxy_ssl_verify on`) using trusted CA certificates to ensure secure end-to-end encryption within the VPC.
+## 6. Nginx Reverse-Proxy Routing Configuration & Request Flow
+The core routing mechanism relies on Nginx distinguishing incoming requests by server_name and proxying traffic to the appropriate downstream internal service via proxy_pass. Upstream TLS verification is enabled (proxy_ssl_verify on) using trusted CA certificates to ensure secure end-to-end encryption within the VPC.
 
 ```nginx
 upstream wordpress_backend {
     server internal-wordpress-alb-prod.us-east-1.elb.amazonaws.com:443;
-    keepalive 32;
-}
+    keepalive 32;}
 
 upstream tooling_backend {
     server internal-tooling-alb-prod.us-east-1.elb.amazonaws.com:443;
-    keepalive 32;
-}
+    keepalive 32;}
 
 server {
     listen 80;
     server_name project15.online *.project15.online;
-    return 301 https://$host$request_uri;
-}
+    return 301 https://$host$request_uri;}
 
 server {
     listen 443 ssl http2;
@@ -100,8 +96,7 @@ server {
     location /healthstatus {
         access_log off;
         return 200 'healthy\n';
-    }
-}
+    }}
 
 server {
     listen 443 ssl http2;
@@ -124,8 +119,17 @@ server {
     location /healthstatus {
         access_log off;
         return 200 'healthy\n';
-    }
-}
+    }}
+
+Nginx Access Log Evidence
+Expected Nginx Access Log entries showing successful 200 OK responses routing to your target domains:
+
+10.0.1.15 - - [14/Oct/2026:09:00:00 +0000] "GET / HTTP/1.1" 200 4520 "-" "Mozilla/5.0..." -> project15.online
+10.0.1.15 - - [14/Oct/2026:09:01:00 +0000] "GET / HTTP/1.1" 200 3180 "-" "Mozilla/5.0..." -> tooling.project15.online
+
+---
+
+
 
 
 ### 7. Load Balancing & Auto Scaling Groups
