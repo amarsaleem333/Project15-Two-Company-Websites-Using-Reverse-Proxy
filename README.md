@@ -136,7 +136,7 @@ Expected Nginx Access Log entries showing successful 200 OK responses routing to
 - **External ALB:** Internet-facing load balancer listening on HTTPS (port 443) with the ACM certificate attached, forwarding traffic to the Nginx target group.
 - **Internal ALB:** Private load balancer routing traffic securely from Nginx to the private auto-scaling web server pools.
 - **Auto Scaling:** Configured ASGs for Nginx, Bastion, and Web servers with desired capacity set to 2, min 2, max 4, and a CPU utilization scaling policy threshold of 90%.  
-📸 **Evidence:** ![Target Group Health Status](docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png)
+📸 **Evidence:** ![Target Group Health Status]([docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png](https://github.com/amarsaleem333/Project15-Two-Company-Websites-Using-Reverse-Proxy/blob/main/docs/EC2%20instance%20spin%20two%20more%20auto%20scaling%20traget%20after%20set%20the%20nginx-asg.png))
 
 
 
